@@ -4,6 +4,7 @@ import datetime
 from dataset.bbox_dataset import get_datasets
 from models.bbox import create_model
 import tensorflow as tf
+from tensorflow.keras.mixed_precision import experimental as mixed_precision
 
 TRAIN = 0.7
 VAL = 0.15
@@ -48,6 +49,8 @@ def train(input_shape, dataset_path, model_name,restore=False):
 
 
 if __name__ == '__main__':
+    policy = mixed_precision.Policy('mixed_float16')
+    mixed_precision.set_policy(policy)
     parser = argparse.ArgumentParser(description="train bbox model")
     parser.add_argument('dataset_path', metavar='path', type=str, help='Path to ccpd dataset')
     parser.add_argument('-input_shape', type=int, help='input image size')
