@@ -13,15 +13,79 @@ def __get_model__(feature_extractor,extractor_layer=None):
     model.compile(optimizer='adam', loss='mean_squared_error')
     return model
 
-def __get_backborn__(input_size,blocks=4):
+def block_2(inputs):
+    x = layers.Conv2D(3,
+                      kernel_size=1,
+                      padding='same',
+                      use_bias=False,
+                      activation=None)(inputs)
+    x = layers.BatchNormalization(axis=-1,
+                                  epsilon=1e-3,
+                                  momentum=0.999)(inputs)
+    x = layers.ReLU(6.)(x)    
+
+    x = layers.DepthwiseConv2D(kernel_size=3,
+                               strides=2,
+                               activation=None,
+                               use_bias=False,
+                               padding='valid')(x)
+    x = layers.BatchNormalization(axis=-1,
+                                  epsilon=1e-3,
+                                  momentum=0.999)(x)
+    x = layers.ReLU(6.)(x)
+    x = layers.Conv2D(3,
+                      kernel_size=1,
+                      padding='same',
+                      use_bias=False,
+                      activation=None)(x)
+    x = layers.BatchNormalization(axis=-1,
+                                  epsilon=1e-3,
+                                  momentum=0.999)(x)
+    return x
+    
+def block_1(inputs):
+    x = layers.Conv2D(3,
+                      kernel_size=1,
+                      padding='same',
+                      use_bias=False,
+                      activation=None)(inputs)
+    x = layers.BatchNormalization(axis=-1,
+                                  epsilon=1e-3,
+                                  momentum=0.999)(x)
+    x = layers.ReLU(6.)(x)    
+
+    x = layers.DepthwiseConv2D(kernel_size=3,
+                               strides=1,
+                               activation=None,
+                               use_bias=False,
+                               padding='same')(x)
+    x = layers.BatchNormalization(axis=-1,
+                                  epsilon=1e-3,
+                                  momentum=0.999)(x)
+    x = layers.ReLU(6.)(x)
+    x = layers.Conv2D(3,
+                      kernel_size=1,
+                      padding='same',
+                      use_bias=False,
+                      activation=None)(x)
+    x = layers.BatchNormalization(axis=-1,
+                                  epsilon=1e-3,
+                                  momentum=0.999)(x)
+    return layers.Add()([inputs, x])
+
+def __get_backborn__(input_size):
     image = Input(shape=input_size,name='img')
-    X = image
-    for _ in range(blocks):
-        X = layers.Conv2D(64,(1,5),padding='same')(X)
-        X = layers.Conv2D(64,(5,1),strides=2, padding='same')(X)
-        X = layers.MaxPool2D((2,2),strides=2)(X)
-     
-    backborn = tf.keras.Model(inputs=image, outputs=X)
+    x = block_1(image)
+    x = block_2(x)
+    x = block_1(x)
+    x = block_2(x)
+    x = block_1(x)
+    x = block_1(x)
+    x = block_2(x)
+    x = block_1(x)
+    x = block_1(x)
+    x = block_2(x)
+    backborn = tf.keras.Model(inputs=image, outputs=x)
     return backborn
 
 def create_model(input_shape):
