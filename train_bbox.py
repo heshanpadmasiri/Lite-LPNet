@@ -1,3 +1,4 @@
+import joblib
 import argparse
 import os
 import datetime
@@ -46,7 +47,8 @@ def train(input_shape, dataset_path, model_name,restore=False):
     callbacks = __get_callbacks__(model_name)
     model.fit(train_dataset, validation_data=test_dataset, callbacks=[callbacks],epochs=60)
     model.save(f'saved_models/simple_bbox/{model_name}')
-
+    val_eval = model.evaluate(x=val_dataset, return_dict=True)
+    joblib.dump(val_eval,'saved_models/simple_bbox/{model_name}_eval.pkl')
 
 if __name__ == '__main__':
     policy = mixed_precision.Policy('mixed_float16')
