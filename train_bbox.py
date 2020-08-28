@@ -3,7 +3,7 @@ import argparse
 import os
 import datetime
 from dataset.bbox_dataset import get_datasets
-from models.bbox import create_model
+from models.bbox_dispatcher import create_model
 import tensorflow as tf
 from tensorflow.keras.mixed_precision import experimental as mixed_precision
 
@@ -39,7 +39,7 @@ def train(input_shape, dataset_path, model_name,restore=False):
     val_size = int(VAL * dataset_size)
     train_dataset, val_dataset, test_dataset = get_datasets(os.path.join(dataset_path,'*'), train_size, val_size, test_size, target_size=input_shape, batch_size=BATCH_SIZE)
     
-    model = create_model(input_shape + (3,))
+    model = create_model(model_name, input_shape + (3,))
     if restore:
         _, checkpoint_path = __get_paths__(model_name)
         model.load_weights(checkpoint_path)
@@ -55,18 +55,15 @@ if __name__ == '__main__':
     mixed_precision.set_policy(policy)
     parser = argparse.ArgumentParser(description="train bbox model")
     parser.add_argument('dataset_path', metavar='path', type=str, help='Path to ccpd dataset')
+    parser.add_argument('model_name', type=str, help='name for the model')
     parser.add_argument('-input_shape', type=int, help='input image size')
-    parser.add_argument('-model_name', type=str, help='name for the model')
     parser.add_argument('-restore_weights', type=bool, help='restore presaved checkpoints')
     args = parser.parse_args()
     if not args.input_shape:
         input_shape = TARGET_SIZE
     else:
         input_shape = (args.input_shape,) * 2
-    if not args.model_name:
-        model_name = 'bbox'
-    else:
-        model_name = args.model_name
+    model_name = args.model_name
     if args.restore_weights:
         train(input_shape, args.dataset_path, model_name, True)
     else:
