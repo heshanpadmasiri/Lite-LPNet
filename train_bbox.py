@@ -4,6 +4,7 @@ import os
 import datetime
 from dataset.bbox_dataset import get_datasets
 from models.bbox_dispatcher import create_model
+from metrices.iou import IoU
 import tensorflow as tf
 from tensorflow.keras.mixed_precision import experimental as mixed_precision
 
@@ -49,6 +50,10 @@ def train(input_shape, dataset_path, model_name,restore=False):
     model.save(f'saved_models/simple_bbox/{model_name}')
     val_eval = model.evaluate(x=val_dataset, return_dict=True)
     joblib.dump(val_eval,'saved_models/simple_bbox/{model_name}_eval.pkl')
+    iou = IoU(val_dataset, model)
+    print(iou[1])
+    joblib.dump(iou,'saved_models/simple_bbox/{model_name}_iou.pkl')
+
 
 if __name__ == '__main__':
     policy = mixed_precision.Policy('mixed_float16')
