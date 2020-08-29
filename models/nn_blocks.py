@@ -60,3 +60,10 @@ def mobilenet_block_1(inputs):
                                   epsilon=1e-3,
                                   momentum=0.999)(x)
     return layers.Add()([inputs, x])
+
+def rpnet_block_1(inputs):
+    X = layers.Conv2D(64, (1, 5), padding='same')(inputs)
+    X = layers.Conv2D(64, (5, 1), padding='same', strides=2)(X)
+    X = layers.MaxPool2D((2,2), strides=2)(X)
+
+    return X
