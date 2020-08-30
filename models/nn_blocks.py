@@ -67,3 +67,11 @@ def rpnet_block_1(inputs):
     X = layers.MaxPool2D((2,2), strides=2)(X)
 
     return X
+    
+def rpnet_block_2(filters=[64,64]):
+    block = models.Sequential()
+    block.add(layers.Conv2D(filters[0], (5,5), strides=2,padding='same'))
+    block.add(layers.MaxPool2D((2,2), strides=2))
+    block.add(layers.Conv2D(filters[1], (5,5), strides=2, padding='same'))
+    block.add(layers.MaxPool2D((2,2), strides=2))
+    return block
