@@ -39,6 +39,7 @@ def train(input_shape, dataset_path, model_name,restore=False):
     test_size = int(TEST * dataset_size)
     val_size = int(VAL * dataset_size)
     for idx in range(6):
+        print(idx)
         train_dataset, val_dataset, test_dataset = get_datasets(os.path.join(dataset_path,'*'), train_size, val_size, test_size, target_size=input_shape, batch_size=BATCH_SIZE, idx=idx)
         
         model = create_model(model_name)
