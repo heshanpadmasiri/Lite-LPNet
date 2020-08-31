@@ -33,24 +33,22 @@ def __get_callbacks__(model_name,idx):
         monitor='val_loss')
     return [tensorboard_callback, early_stopping_callback, model_checkpoint_callback]
 
-def train(input_shape, dataset_path, model_name,restore=False):
+def train(input_shape, dataset_path, model_name,idx,restore=False):
     dataset_size = len(os.listdir(dataset_path))
     train_size = int(TRAIN * dataset_size)
     test_size = int(TEST * dataset_size)
     val_size = int(VAL * dataset_size)
-    for idx in range(6):
-        train_dataset, val_dataset, test_dataset = get_datasets(os.path.join(dataset_path,'*'), train_size, val_size, test_size, target_size=input_shape, batch_size=BATCH_SIZE, idx=idx)
-        
-        model = create_model(model_name)
-        if restore:
-            _, checkpoint_path = __get_paths__(model_name)
-            model.load_weights(checkpoint_path)
-            print(f"model weights from {checkpoint_path} restored")
-        callbacks = __get_callbacks__(model_name,idx)
-        model.fit(train_dataset, validation_data=test_dataset,verbose=2, callbacks=[callbacks],epochs=60)
-        model.save(f'saved_models/lp_seperate/{model_name}/{idx}')
-        val_eval = model.evaluate(x=val_dataset, return_dict=True)
-        joblib.dump(val_eval,f'saved_models/lp_seperate/{model_name}_{idx}_eval.pkl')
+    train_dataset, val_dataset, test_dataset = get_datasets(os.path.join(dataset_path,'*'), train_size, val_size, test_size, target_size=input_shape, batch_size=BATCH_SIZE, idx=idx)
+    model = create_model(model_name)
+    if restore:
+        _, checkpoint_path = __get_paths__(model_name)
+        model.load_weights(checkpoint_path)
+        print(f"model weights from {checkpoint_path} restored")
+    callbacks = __get_callbacks__(model_name,idx)
+    model.fit(train_dataset, validation_data=test_dataset,verbose=2, callbacks=[callbacks],epochs=60)
+    model.save(f'saved_models/lp_seperate/{model_name}/{idx}')
+    val_eval = model.evaluate(x=val_dataset, return_dict=True)
+    joblib.dump(val_eval,f'saved_models/lp_seperate/{model_name}_{idx}_eval.pkl')
 
 
 if __name__ == '__main__':
@@ -59,6 +57,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="train bbox model")
     parser.add_argument('dataset_path', metavar='path', type=str, help='Path to ccpd dataset')
     parser.add_argument('model_name', type=str, help='name for the model')
+    parser.add_argument('idx', type=int, help='character index in the license plate')
     parser.add_argument('-input_shape', type=int, help='input image size')
     parser.add_argument('-restore_weights', type=bool, help='restore presaved checkpoints')
     args = parser.parse_args()
@@ -67,7 +66,8 @@ if __name__ == '__main__':
     else:
         input_shape = (args.input_shape,) * 2
     model_name = args.model_name
+    idx = args.idx
     if args.restore_weights:
-        train(input_shape, args.dataset_path, model_name, True)
+        train(input_shape, args.dataset_path, model_name, idx, True)
     else:
-        train(input_shape, args.dataset_path, model_name)
+        train(input_shape, args.dataset_path, model_name, idx)
