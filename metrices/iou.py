@@ -33,7 +33,7 @@ def to_box_cords(bboxs):
     Y_2 = Y + (H/2)
     return tf.stack([Y_1,X_1,Y_2,X_2],axis=1)
 
-def IoU(dataset, model, IoUThreshold=0.7):
+def IoU(dataset, model, target_size,IoUThreshold=0.7):
     IoUTotal = 0
     count = 0
     correct = 0
@@ -58,4 +58,4 @@ def IoU(dataset, model, IoUThreshold=0.7):
 
             if iou >= IoUThreshold:
                 correct += 1
-    return correct, correct/countI, Ious
+    return correct, correct/count, IoUs
