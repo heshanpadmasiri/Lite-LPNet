@@ -1,6 +1,6 @@
 import tensorflow as tf
 from tensorflow.keras import datasets, layers, models, Input
-from models.nn_blocks import rpnet_block_1,rpnet_block_3
+from models.nn_blocks import rpnet_block_1, rpnet_block_3
 
 
 
@@ -20,9 +20,9 @@ def __get_model__(feature_extractor,extractor_layer=None):
 def __get_backborn__(input_size):
     image = Input(shape=input_size,name='img')
     x = rpnet_block_3(image)
-    x = rpnet_block_3(x)
-    x = rpnet_block_3(x)
-    x = rpnet_block_1(x)
+    x = rpnet_block_3(x,3)
+    x = rpnet_block_3(x,3)
+    x = rpnet_block_3(x,3)
     x = rpnet_block_1(x)
     x = rpnet_block_1(x)
     backborn = tf.keras.Model(inputs=image, outputs=x)
@@ -32,4 +32,3 @@ def create_model(input_shape):
     backborn = __get_backborn__(input_shape)
     model = __get_model__(backborn)
     return model
-
