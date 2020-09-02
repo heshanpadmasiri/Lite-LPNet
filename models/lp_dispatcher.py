@@ -2,9 +2,11 @@ import tensorflow as tf
 from tensorflow.keras import datasets, layers, models,Input
 
 from models.lp_2 import create_model as create_model_2
+from models.lp_3 import create_model as create_model_3
 
 CONSTRUCTORS = {
-    'v2' : create_model_2
+    'v2' : create_model_2,
+    'v3' : create_model_3
 }
 
 def create_model(model_name):
