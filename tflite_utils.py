@@ -2,7 +2,7 @@ import tensorflow as tf
 import argparse
 
 
-def load_model(model_name):
+def load_model_bbox(model_name):
     model = tf.keras.models.load_model(f'saved_models/simple_bbox/{model_name}')
     return model
 
@@ -21,6 +21,6 @@ if __name__ == '__main__':
     parser.add_argument('model_name', type=str, help='name of the model to convert')
 
     args = parser.parse_args()
-    model = load_model(args.model_name)
+    model = load_model_bbox(args.model_name)
     tflite_model = convert_model(model)
     save_model(tflite_model, args.model_name) 
