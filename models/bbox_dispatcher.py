@@ -4,6 +4,7 @@ from models.bbox_18 import create_model as create_model_18
 from models.bbox_19 import create_model as create_model_19
 from models.bbox_20 import create_model as create_model_20
 from models.bbox_21 import create_model as create_model_21
+from models.bbox_22 import create_model as create_model_22
 
 CONSTRUCTORS = {
     'v16' : create_model_16,
@@ -11,7 +12,8 @@ CONSTRUCTORS = {
     'v18' : create_model_18,
     'v19' : create_model_19,
     'v20' : create_model_20,
-    'v21' : create_model_21
+    'v21' : create_model_21,
+    'v22' : create_model_22
 }
 
 def create_model(model_name,input_shape):

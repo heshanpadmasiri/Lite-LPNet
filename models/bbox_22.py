@@ -23,7 +23,6 @@ def __get_backborn__(input_size):
     x = rpnet_block_3(x,3)
     x = rpnet_block_3(x,3)
     x = rpnet_block_3(x,3)
-    x = rpnet_block_3(x,3)
     x = rpnet_block_1(x)
     x = rpnet_block_1(x)
     backborn = tf.keras.Model(inputs=image, outputs=x)
