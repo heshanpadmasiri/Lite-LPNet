@@ -3,10 +3,12 @@ from tensorflow.keras import datasets, layers, models,Input
 
 from models.lp_2 import create_model as create_model_2
 from models.lp_3 import create_model as create_model_3
+from models.lp_4 import create_model as create_model_4
 
 CONSTRUCTORS = {
     'v2' : create_model_2,
-    'v3' : create_model_3
+    'v3' : create_model_3,
+    'v4' : create_model_4
 }
 
 def create_model(model_name):

@@ -86,3 +86,9 @@ def rpnet_block_3(inputs,k=5):
     X = layers.Conv2D(64, (1, k), padding='same', activation='relu')(inputs)
     X = layers.Conv2D(64, (k, 1), padding='same', strides=2, activation='relu')(X)
     return X
+
+def rpnet_block_3_seq(k=5):
+    block = models.Sequential()
+    block.add(layers.Conv2D(64, (1,k), padding='same',activation='relu'))
+    block.add(layers.Conv2D(64, (k,1), padding='same', strides=2, activation='relu'))
+    return block
