@@ -56,14 +56,16 @@ def train(input_shape, dataset_path, model_name,restore=False):
 
 
 if __name__ == '__main__':
-    policy = mixed_precision.Policy('mixed_float16')
-    mixed_precision.set_policy(policy)
     parser = argparse.ArgumentParser(description="train bbox model")
     parser.add_argument('dataset_path', metavar='path', type=str, help='Path to ccpd dataset')
     parser.add_argument('model_name', type=str, help='name for the model')
     parser.add_argument('-input_shape', type=int, help='input image size')
     parser.add_argument('-restore_weights', type=bool, help='restore presaved checkpoints')
+    parser.add_argument('-mixed_precision', type=bool, help='use mixed precision training')
     args = parser.parse_args()
+    if args.mixed_precision:
+        policy = mixed_precision.Policy('mixed_float16')
+        mixed_precision.set_policy(policy)
     if not args.input_shape:
         input_shape = TARGET_SIZE
     else:
