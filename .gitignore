@@ -137,3 +137,4 @@ saved_models/
 save
 *.tflite
 *.zip
+*.pkl

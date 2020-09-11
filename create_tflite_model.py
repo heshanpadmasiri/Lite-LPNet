@@ -3,26 +3,26 @@ import sys
 from models.bbox_dispatcher import create_model as bbox_create_model
 from models.lp_dispatcher import create_model as lp_create_model
 from models.lp_dispatcher import create_combined_model
-import tflite_utils
+import model_utils
 import train_bbox
 import train_lp
 
 def stage_1_without_training(model_name):
     model = bbox_create_model(model_name,train_bbox.TARGET_SIZE + (3,))
-    tf_lite_model = tflite_utils.convert_model(model)
-    tflite_utils.save_model(tf_lite_model, f's1_{model_name}')
+    tf_lite_model = model_utils.convert_model(model)
+    model_utils.save_model(tf_lite_model, f's1_{model_name}')
 
 def stage_1_with_training(model_name, dataset_path):
     train_bbox.train(train_bbox.TARGET_SIZE,dataset_path,model_name)
-    model = tflite_utils.load_model_bbox(model_name)
-    tf_lite_model = tflite_utils.convert_model(model)
-    tflite_utils.save_model(tf_lite_model, f's1_{model_name}')
+    model = model_utils.load_model_bbox(model_name)
+    tf_lite_model = model_utils.convert_model(model)
+    model_utils.save_model(tf_lite_model, f's1_{model_name}')
 
 
 def stage_2_without_training_combined(model_name):
     model = create_combined_model(model_name, train_lp.TARGET_SIZE + (3,))
-    tf_lite_model = tflite_utils.convert_model(model)
-    tflite_utils.save_model(tf_lite_model, f's2_{model_name}')
+    tf_lite_model = model_utils.convert_model(model)
+    model_utils.save_model(tf_lite_model, f's2_{model_name}')
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Directly create tflite model')
