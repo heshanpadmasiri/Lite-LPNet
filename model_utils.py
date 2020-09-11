@@ -6,6 +6,26 @@ def load_model_bbox(model_name):
     model = tf.keras.models.load_model(f'saved_models/simple_bbox/{model_name}')
     return model
 
+def __load_model_lp_char__(model_name, idx):
+    model = tf.keras.models.load_model(f'saved_models/lp_seperate/{model_name}/{idx}')
+    model._name = f'char_{idx}'
+    model.trainable = False
+    return model
+
+def __create_combined_model_lp__(seperate_models,input_shape):
+    image = tf.keras.Input(shape=input_shape,name='img')
+    seperate_outputs = [model(image) for  model in seperate_models]
+    output = tf.stack(seperate_outputs,axis=1)
+    output = tf.math.argmax(output,axis=2)
+    model = tf.keras.Model(inputs=image, outputs=output, name='combined_model')
+    return model
+
+def load_model_lp(model_name):
+    sub_models = [__load_model_lp_char__(model_name, idx) for idx in range(7)]
+    input_shape = (sub_models[0].input.shape[1], sub_models[0].input.shape[2], sub_models[0].input.shape[3])
+    model = __create_combined_model_lp__(sub_models, input_shape)
+    return model
+
 def convert_model(model):
     converter = tf.lite.TFLiteConverter.from_keras_model(model)
     tflite_model = converter.convert()

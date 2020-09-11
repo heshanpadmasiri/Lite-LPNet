@@ -2,7 +2,9 @@ import argparse
 import model_utils
 import tensorflow as tf
 from metrices.iou import IoU
+from metrices.accuracy import Accuracy
 from dataset.bbox_dataset import get_datasets as get_bbox_dataset
+from dataset.lp_dataset import get_datasets as get_lp_dataset
 import os
 import joblib
 
@@ -15,7 +17,7 @@ def __load_model__(stage, model_name):
     if stage == 1:
         model = model_utils.load_model_bbox(model_name)
     else:
-        raise NotImplementedError("Model loading for lp models not implemented")
+        model = model_utils.load_model_lp(model_name)
     return model
 
 def __get_dataset__(stage, dataset_path, input_shape):
@@ -26,7 +28,7 @@ def __get_dataset__(stage, dataset_path, input_shape):
     if stage == 1:
         train_dataset, val_dataset, test_dataset = get_bbox_dataset(os.path.join(dataset_path,'*'), train_size, val_size, test_size, target_size=input_shape, batch_size=BATCH_SIZE)
     else:
-        raise NotImplementedError("Datasets for stage 2 are not implemented")
+        train_dataset, val_dataset, test_dataset = get_lp_dataset(os.path.join(dataset_path,'*'), train_size, val_size, test_size, target_size=input_shape, batch_size=BATCH_SIZE, idx=-1)
     return val_dataset
 
 def __evaluate_stage_1__(model:tf.keras.Model,input_shape:tuple,dataset):
@@ -40,13 +42,21 @@ def __evaluate_stage_1__(model:tf.keras.Model,input_shape:tuple,dataset):
     print(f'AP : {ap}')
     return eval
 
+def __evaluate_stage_2__(model:tf.keras.Model, dataset):
+    accuracy = Accuracy(model, dataset)
+    eval = {
+        'Accuracy' : accuracy
+    }
+    print(f'Accuracy: {accuracy}')
+    return eval
+
 def evaluate(model:tf.keras.Model, stage:int, dataset_path:str):
     input_shape = (model.input.shape[1], model.input.shape[2])
     dataset = __get_dataset__(stage, dataset_path, input_shape)
     if stage == 1:
         eval = __evaluate_stage_1__(model, input_shape, dataset)
     else:
-        raise NotImplementedError("Stage 2 evaluation not implemented")
+        eval = __evaluate_stage_2__(model, dataset)
     return eval
 
 if __name__ == "__main__":

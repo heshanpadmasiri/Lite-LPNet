@@ -60,7 +60,11 @@ def getPathProcessor(target_size,idx):
         length = tf.strings.length(file_name)
         file_name = tf.strings.substr(file_name,0,length-4)
         bbox_coord = extract_box_coord(file_name)
-        license_plate = extract_license_plate(file_name)[idx]
+        if idx == -1:
+            license_plate = extract_license_plate(file_name)
+            license_plate = tf.cast(license_plate, tf.int32)
+        else:
+            license_plate = extract_license_plate(file_name)[idx]
         img = tf.io.read_file(file_path)
         img = decode_img(img,target_size,bbox_coord)
         return img, license_plate
