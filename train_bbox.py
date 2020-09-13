@@ -35,9 +35,9 @@ def __get_callbacks__(model_name):
 
 def train(input_shape, dataset_path, model_name,restore=False):
     dataset_size = len(os.listdir(dataset_path))
-    train_size = int(train * dataset_size)
-    test_size = int(test * dataset_size)
-    val_size = int(val * dataset_size)
+    train_size = int(TRAIN * dataset_size)
+    test_size = int(TEST * dataset_size)
+    val_size = int(VAL * dataset_size)
     train_dataset, val_dataset, test_dataset = get_datasets(os.path.join(dataset_path,'*'), train_size, val_size, test_size, target_size=input_shape, batch_size=BATCH_SIZE)
     
     model = create_model(model_name, input_shape + (3,))
