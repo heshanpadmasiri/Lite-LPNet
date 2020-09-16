@@ -14,11 +14,16 @@ def get_eval_files(base_path:Path):
     eval_files = [each for each in pickle_files if 'iou' in each.name]
     return eval_files
 
-def print_eval_results(eval_path:Path):
+def get_eval_results(eval_path:Path):
     name = eval_path.name.strip('.pkl').split('_')[0]
     data = joblib.load(eval_path)
-    print(f'{name} : {data[1]}')
+    return (name, data[1])
 
+def print_eval_results(eval_paths):
+    results = [get_eval_results(each) for each in eval_paths]
+    results.sort(key=lambda each: each[1],reverse=True)
+    for each in results:
+        print(f'model_name: {each[0]} , ap: {each[1]}')
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="train bbox model")
@@ -27,5 +32,4 @@ if __name__ == "__main__":
     stage = args.stage
     if stage == 1:
         eval_results = get_eval_files(bbox_path)
-        for each in eval_results:
-            print_eval_results(each)
+        print_eval_results(eval_results)
