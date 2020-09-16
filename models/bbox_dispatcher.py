@@ -9,6 +9,7 @@ from models.bbox_23 import create_model as create_model_23
 from models.bbox_24 import create_model as create_model_24
 from models.bbox_25 import create_model as create_model_25
 from models.bbox_26 import create_model as create_model_26
+from models.bbox_27 import create_model as create_model_27
 
 CONSTRUCTORS = {
     'v16': create_model_16,
@@ -21,7 +22,8 @@ CONSTRUCTORS = {
     'v23': create_model_23,
     'v24': create_model_24,
     'v25': create_model_25,
-    'v26': create_model_26
+    'v26': create_model_26,
+    'v27': create_model_27
 }
 
 
