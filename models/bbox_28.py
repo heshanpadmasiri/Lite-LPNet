@@ -1,6 +1,6 @@
 import tensorflow as tf
 from tensorflow.keras import datasets, layers, models, Input
-from models.nn_blocks import rpnet_block_1, rpnet_block_3, mobilenet_block_1
+from models.nn_blocks import rpnet_block_1, rpnet_block_3, mobilenet_block_1, mobilenet_block_2
 
 
 def __get_model__(feature_extractor, extractor_layer=None):
@@ -16,11 +16,11 @@ def __get_model__(feature_extractor, extractor_layer=None):
 def __get_backborn__(input_size):
     image = Input(shape=input_size, name='img')
     x = mobilenet_block_1(image)
+    x = mobilenet_block_2(x)
     x = rpnet_block_3(x)
     x = rpnet_block_3(x, 3)
     x = rpnet_block_3(x, 3)
     x = rpnet_block_3(x, 3)
-    x = mobilenet_block_1(x)
     x = rpnet_block_1(x)
     x = rpnet_block_1(x)
     backborn = tf.keras.Model(inputs=image, outputs=x)
