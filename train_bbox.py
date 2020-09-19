@@ -48,6 +48,8 @@ def __get_callbacks__(model_name):
 def kfold_train(input_shape, dataset_path, model_name, folds):
     fold_data = create_kfolds(Path(dataset_path), folds)
     for fold in range(folds):
+        print(f'Training fold: {fold}')
+        model = create_model(model_name, input_shape + (3, ))
         train_dataset, test_dataset = get_kfold_dataset(
             fold_data, fold, input_shape, BATCH_SIZE)
         callbacks = __get_callbacks__(model_name)
@@ -57,10 +59,7 @@ def kfold_train(input_shape, dataset_path, model_name, folds):
                   callbacks=[callbacks],
                   epochs=60)
         model.save(f'saved_models/simple_bbox/{model_name}_{fold}')
-        val_eval = model.evaluate(x=val_dataset, return_dict=True)
-        joblib.dump(val_eval,
-                    f'saved_models/simple_bbox/{model_name}_{fold}_eval.pkl')
-        iou = IoU(val_dataset, model, input_shape)
+        iou = IoU(test_data, model, input_shape)
         print(iou[1])
         joblib.dump(iou,
                     f'saved_models/simple_bbox/{model_name}_{fold}_iou.pkl')
