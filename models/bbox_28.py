@@ -1,7 +1,6 @@
 import tensorflow as tf
 from tensorflow.keras import datasets, layers, models, Input
 from models.nn_blocks import rpnet_block_1, rpnet_block_3, mobilenet_block_1, mobilenet_block_2
-
 from metrices.iou import IoUMetric
 
 
