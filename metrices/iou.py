@@ -116,14 +116,13 @@ class IoUMetric(tf.keras.metrics.Metric):
 
         ious = tf.map_fn(fn=self.__iou__, elems=boxes)
         iou = tf.reduce_sum(ious)
-
         self.iou.assign_add(iou)
-        self.count.assign_add(1.0)
+        self.count.assign_add(tf.cast(tf.size(ious), tf.float32))
 
     def result(self):
-        tf.math.divide(self.iou, self.count, name=None)
-        return self.iou
+        return tf.math.divide(self.iou, self.count, name=None)
 
     def reset_states(self):
         # The state of the metric will be reset at the start of each epoch.
         self.iou.assign(0.)
+        self.count.assign(0.)
