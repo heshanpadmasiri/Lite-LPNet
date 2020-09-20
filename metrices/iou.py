@@ -66,10 +66,11 @@ def IoU(dataset, model, target_size, IoUThreshold=0.7):
 
 class IoUMetric(tf.keras.metrics.Metric):
     def __init__(self, target_size, threshold=0.7, name='iou', **kwargs):
-        super(IoU, self).__init__(name=name, **kwargs)
+        super(IoUMetric, self).__init__(name=name, **kwargs)
         self.target_size = target_size
         self.threshold = threshold
         self.iou = self.add_weight(name='iou', initializer='zeros')
+        self.count = self.add_weight(name='count', initializer='zeros')
 
     @tf.function
     def __iou__(self, boxes):
@@ -114,9 +115,15 @@ class IoUMetric(tf.keras.metrics.Metric):
         boxes = tf.stack([boxA, boxB], axis=1)
 
         ious = tf.map_fn(fn=self.__iou__, elems=boxes)
-        iou = tf.reduce_sum(ious) / Y.shape[0]
+        iou = tf.reduce_sum(ious)
 
         self.iou.assign_add(iou)
+        self.count.assign_add(1.0)
 
     def result(self):
+        tf.math.divide(self.iou, self.count, name=None)
         return self.iou
+
+    def reset_states(self):
+        # The state of the metric will be reset at the start of each epoch.
+        self.iou.assign(0.)

@@ -32,7 +32,7 @@ def __get_callbacks__(model_name):
     early_stopping_callback = tf.keras.callbacks.EarlyStopping(
         monitor='val_loss',
         min_delta=0,
-        patience=3,
+        patience=10,
         verbose=0,
         mode='auto',
         baseline=None,
