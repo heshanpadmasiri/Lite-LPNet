@@ -60,9 +60,9 @@ def kfold_train(input_shape, dataset_path, model_name, folds):
                   epochs=60)
         model.save(f'saved_models/simple_bbox/{model_name}_{fold}')
         iou = IoU(test_dataset, model, input_shape)
-        print(iou[1])
-        joblib.dump(iou,
-                    f'saved_models/simple_bbox/{model_name}_{fold}_iou.pkl')
+        val_eval = model.evaluate(x=test_dataset, return_dict=True)
+        joblib.dump(val_eval,
+                    f'saved_models/simple_bbox/{model_name}_eval.pkl')
 
 
 def train(input_shape, dataset_path, model_name, restore=False):
@@ -92,9 +92,6 @@ def train(input_shape, dataset_path, model_name, restore=False):
     model.save(f'saved_models/simple_bbox/{model_name}')
     val_eval = model.evaluate(x=val_dataset, return_dict=True)
     joblib.dump(val_eval, f'saved_models/simple_bbox/{model_name}_eval.pkl')
-    iou = IoU(val_dataset, model, input_shape)
-    print(iou[1])
-    joblib.dump(iou, f'saved_models/simple_bbox/{model_name}_iou.pkl')
 
 
 if __name__ == '__main__':
