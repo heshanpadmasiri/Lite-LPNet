@@ -30,11 +30,11 @@ def __get_callbacks__(model_name):
     tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir,
                                                           histogram_freq=1)
     early_stopping_callback = tf.keras.callbacks.EarlyStopping(
-        monitor='val_loss',
+        monitor='val_iou',
         min_delta=0,
         patience=10,
         verbose=0,
-        mode='auto',
+        mode='max',
         baseline=None,
         restore_best_weights=True)
     model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
