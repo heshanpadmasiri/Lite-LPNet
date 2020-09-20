@@ -93,15 +93,14 @@ def get_kfold_dataset(fold_data,
         list(map(lambda file_path: str(file_path), test_data)))
     process_path = getPathProcessor(target_size)
     train_dataset = train_file_name_ds.map(
-        process_path,
-        num_parallel_calls=tf.data.experimental.AUTOTUNE).batch(batch_size)
+        process_path, num_parallel_calls=tf.data.experimental.AUTOTUNE)
     test_dataset = test_file_name_ds.map(
-        process_path,
-        num_parallel_calls=tf.data.experimental.AUTOTUNE).batch(batch_size)
+        process_path, num_parallel_calls=tf.data.experimental.AUTOTUNE)
     if cached:
         train_cache = f'./cache/train_{fold}'
         test_cache = f'./cache/test_{fold}'
-        train_dataset.cache(train_cache)
-        test_dataset.cache(test_cache)
-
+        train_dataset = train_dataset.cache(train_cache)
+        test_dataset = test_dataset.cache(test_cache)
+    train_dataset = train_dataset.batch(batch_size)
+    test_dataset = test_dataset.batch(batch_size)
     return train_dataset, test_dataset

@@ -45,13 +45,16 @@ def __get_callbacks__(model_name):
     ]
 
 
-def kfold_train(input_shape, dataset_path, model_name, folds):
+def kfold_train(input_shape, dataset_path, model_name, folds, cache_dataset):
     fold_data = create_kfolds(Path(dataset_path), folds)
     for fold in range(folds):
         print(f'Training fold: {fold}')
         model = create_model(model_name, input_shape + (3, ))
-        train_dataset, test_dataset = get_kfold_dataset(
-            fold_data, fold, input_shape, BATCH_SIZE)
+        train_dataset, test_dataset = get_kfold_dataset(fold_data,
+                                                        fold,
+                                                        input_shape,
+                                                        BATCH_SIZE,
+                                                        cached=cache_dataset)
         callbacks = __get_callbacks__(model_name)
         model.fit(train_dataset,
                   validation_data=test_dataset,
@@ -59,7 +62,6 @@ def kfold_train(input_shape, dataset_path, model_name, folds):
                   callbacks=[callbacks],
                   epochs=60)
         model.save(f'saved_models/simple_bbox/{model_name}_{fold}')
-        iou = IoU(test_dataset, model, input_shape)
         val_eval = model.evaluate(x=test_dataset, return_dict=True)
         joblib.dump(val_eval,
                     f'saved_models/simple_bbox/{model_name}_eval.pkl')
@@ -113,6 +115,9 @@ if __name__ == '__main__':
         type=int,
         help=
         'Number of folds for kfold validation. Leave empty to ignore kfolds')
+    parser.add_argument('-cache_dataset',
+                        type=bool,
+                        help='Cache dataset to disk. Default false')
     args = parser.parse_args()
     if args.mixed_precision:
         policy = mixed_precision.Policy('mixed_float16')
@@ -128,4 +133,6 @@ if __name__ == '__main__':
         else:
             train(input_shape, args.dataset_path, model_name)
     else:
-        kfold_train(input_shape, args.dataset_path, model_name, args.folds)
+        cache = True if args.cache_dataset else False
+        kfold_train(input_shape, args.dataset_path, model_name, args.folds,
+                    cache)
