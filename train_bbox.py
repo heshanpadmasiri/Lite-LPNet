@@ -19,7 +19,7 @@ TARGET_SIZE = (480, 480)
 
 def __get_paths__(model_name):
     log_dir = f"logs/simple_bbox/{model_name}/" + datetime.datetime.now(
-    ).strftime("%Y%m%d-%H%M%S")
+    ).strftime("%y%m%d-%h%m%s")
     checkpoint_dir = f"checkpoints/{model_name}"
     return log_dir, checkpoint_dir
 
