@@ -84,7 +84,7 @@ def get_kfold_dataset(fold_data,
                       fold,
                       target_size=(480, 480),
                       batch_size=32,
-                      cached=True):
+                      cached=False):
     train_data = fold_data[fold]['train']
     test_data = fold_data[fold]['test']
     train_file_name_ds = tf.data.Dataset.from_tensor_slices(

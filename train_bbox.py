@@ -59,7 +59,7 @@ def kfold_train(input_shape, dataset_path, model_name, folds):
                   callbacks=[callbacks],
                   epochs=60)
         model.save(f'saved_models/simple_bbox/{model_name}_{fold}')
-        iou = IoU(test_data, model, input_shape)
+        iou = IoU(test_dataset, model, input_shape)
         print(iou[1])
         joblib.dump(iou,
                     f'saved_models/simple_bbox/{model_name}_{fold}_iou.pkl')
