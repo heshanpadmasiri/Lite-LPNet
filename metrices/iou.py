@@ -126,3 +126,13 @@ class IoUMetric(tf.keras.metrics.Metric):
         # The state of the metric will be reset at the start of each epoch.
         self.iou.assign(0.)
         self.count.assign(0.)
+
+    @classmethod
+    def from_config(cls, config):
+        target_size = config['target_size']
+        threshold = config['threshold']
+        return IoUMetric(target_size=target_size, threshold=threshold)
+
+    def get_config(self):
+        config = {'target_size': self.target_size, 'threshold': self.threshold}
+        return config
