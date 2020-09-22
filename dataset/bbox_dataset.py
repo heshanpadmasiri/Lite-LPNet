@@ -101,6 +101,8 @@ def get_kfold_dataset(fold_data,
         test_cache = f'./cache/test_{fold}'
         train_dataset = train_dataset.cache(train_cache)
         test_dataset = test_dataset.cache(test_cache)
-    train_dataset = train_dataset.batch(batch_size)
-    test_dataset = test_dataset.batch(batch_size)
+    train_dataset = train_dataset.batch(batch_size).prefetch(
+        tf.data.experimental.AUTOTUNE)
+    test_dataset = test_dataset.batch(batch_size).prefetch(
+        tf.data.experimental.AUTOTUNE)
     return train_dataset, test_dataset
