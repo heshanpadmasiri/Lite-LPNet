@@ -45,9 +45,10 @@ def __get_callbacks__(model_name):
     ]
 
 
-def kfold_train(input_shape, dataset_path, model_name, folds, cache_dataset):
+def kfold_train(input_shape, dataset_path, model_name, folds, cache_dataset,
+                starting_fold):
     fold_data = create_kfolds(Path(dataset_path), folds)
-    for fold in range(folds):
+    for fold in range(starting_fold, folds):
         print(f'Training fold: {fold}')
         model = create_model(model_name, input_shape + (3, ))
         train_dataset, test_dataset = get_kfold_dataset(fold_data,
@@ -115,6 +116,11 @@ if __name__ == '__main__':
         type=int,
         help=
         'Number of folds for kfold validation. Leave empty to ignore kfolds')
+    parser.add_argument(
+        '-starting_fold',
+        type=int,
+        help=
+        'Set the starting fold. Default to 0. Must define folds to use this')
     parser.add_argument('-cache_dataset',
                         type=bool,
                         help='Cache dataset to disk. Default false')
@@ -134,5 +140,7 @@ if __name__ == '__main__':
             train(input_shape, args.dataset_path, model_name)
     else:
         cache = True if args.cache_dataset else False
+        starting_fold = args.starting_fold if args.starting_fold else 0
+        assert 0 < starting_fold < args.folds
         kfold_train(input_shape, args.dataset_path, model_name, args.folds,
-                    cache)
+                    cache, starting_fold)
