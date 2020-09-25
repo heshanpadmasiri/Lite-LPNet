@@ -9,6 +9,7 @@ from models.bbox_dispatcher import create_model
 from metrices.iou import IoU
 import tensorflow as tf
 from tensorflow.keras.mixed_precision import experimental as mixed_precision
+import utils
 
 TRAIN = 0.7
 VAL = 0.15
@@ -66,6 +67,8 @@ def kfold_train(input_shape, dataset_path, model_name, folds, cache_dataset,
         val_eval = model.evaluate(x=test_dataset, return_dict=True)
         joblib.dump(val_eval,
                     f'saved_models/simple_bbox/{model_name}_eval.pkl')
+        utils.zip_dir(f'fold_{fold}_saved_models.zip', 'saved_models')
+        utils.zip_dir(f'fold_{fold}_log.zip', 'logs')
 
 
 def train(input_shape, dataset_path, model_name, restore=False):
