@@ -144,6 +144,6 @@ if __name__ == '__main__':
     else:
         cache = True if args.cache_dataset else False
         starting_fold = args.starting_fold if args.starting_fold else 0
-        assert 0 < starting_fold < args.folds
+        assert 0 <= starting_fold < args.folds
         kfold_train(input_shape, args.dataset_path, model_name, args.folds,
                     cache, starting_fold)
